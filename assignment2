@@ -1,0 +1,64 @@
+package assignment;
+
+import java.util.concurrent.Semaphore;
+
+class New extends Thread
+{
+	 public Semaphore sema = null;
+	 Number num;
+	 int m;
+	 
+	public New(Semaphore semaphore,Number num,int m)
+	{
+		this.sema = semaphore;
+		this.num=num;
+		this.m=m;
+	}
+	void read()
+	{
+		System.out.println(this.num.i);
+	}
+	void write(int data)
+	{
+		try {
+			sema.acquire();
+			this.num.i=data;
+			System.out.println(this.num.i);
+			 Thread.sleep(2000);
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		sema.release();
+	}
+	public void run()
+	{
+		//read();
+		write(m);
+		read();
+	}
+}
+class Number
+{
+	int i=0;
+	  
+	   
+}
+public class Example2 {
+	public static void main(String args[]) throws InterruptedException {
+		System.out.println("Starting here..");
+		Semaphore sema = new Semaphore(1);//permits count
+		int count = sema.availablePermits();
+		Number num=new Number();
+		System.out.println("Starting the Threads with permits .."+count);
+		New n=new New(sema,num,20);
+		New n1=new New(sema,num,30);
+		n.start();
+		
+		n1.start();
+
+	
+}
+}
