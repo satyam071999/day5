@@ -1,0 +1,102 @@
+package assignment;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+class Producer implements Runnable
+{
+	private final BlockingQueue<Person> queue;
+	ArrayList<Person> ar=new ArrayList<Person>();
+	
+	public Producer(BlockingQueue<Person> q)
+	{
+	ar.add(new Person(1,"sa",344));
+	ar.add(new Person(1,"sa",344));
+	ar.add(new Person(2,"we",399));
+	ar.add(new Person(6,"rt",340));
+	ar.add(new Person(2,"we",399));
+	queue = q;
+	}
+	
+	public void run()
+	{
+		    Map<Integer,Integer> mp=new HashMap<Integer,Integer>();
+		 for (int counter = 0; counter < ar.size(); counter++) { 		      
+	          try {
+	        	  //System.out.println(ar.get(counter));
+	        	  if(!mp.containsKey(ar.get(counter).id))
+	        	  {
+	        		  mp.put(ar.get(counter).id, 1);
+	        		  queue.put(ar.get(counter));
+	        		  System.out.print(counter);
+	        	  }
+	        		 
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	          
+	      }   
+		
+	}
+}
+class Consumer implements Runnable
+{
+	private final BlockingQueue<Person> queue;
+	Set<Person> hash_Set ;
+	public Consumer(BlockingQueue<Person> q,Set<Person> hash_Set)
+	{
+		queue = q;
+		this.hash_Set=hash_Set;
+	}
+	public void run()
+	{
+		while(true)
+		{
+		try {
+			
+			Person p=queue.take();
+			hash_Set.add(p);
+			System.out.println(hash_Set);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	}
+
+}
+
+class Person
+{
+int id;
+String name;
+int salary;
+ public Person(int id,String name,int salary)
+{
+	this.id=id;
+	this.name=name;
+	this.salary=salary;
+}
+ 
+
+}
+public class Example3 {
+
+	public static void main(String[] args) {
+		ArrayBlockingQueue<Person> blq = new ArrayBlockingQueue<Person>(1);
+		Set<Person> hash_Set= new HashSet<Person>(); 
+		 Producer p1 = new Producer(blq);
+		 Consumer c1 = new Consumer(blq,hash_Set);
+		new Thread(p1).start();
+	     new Thread(c1).start();
+	     
+		 
+		
+	}
+}
