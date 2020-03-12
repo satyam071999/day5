@@ -1,0 +1,85 @@
+package assignment;
+import java.util.*;
+import java.io.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
+
+
+class  callable implements Callable<Integer>
+{
+	NewList n;
+	public callable( NewList n)
+	{
+		this.n=n;
+	}
+	public Integer call()
+	{
+		int i=n.read();
+		
+		return i  ;
+		
+	}
+
+}
+class  callable1 implements Callable<Integer>
+{
+	NewList n;
+	public callable1( NewList n)
+	{
+		this.n=n;
+	}
+	public Integer call()
+	{
+		
+		int i=n.write();
+		
+		return i  ;
+		
+	}
+}
+class NewList
+{
+	ArrayList<AtomicInteger> ar=new ArrayList<AtomicInteger>();
+	public NewList()
+	{
+	
+	ar.add(new AtomicInteger(100));
+	}
+	    
+	int read()
+	{
+		return (ar.get(0).get());
+	}
+	int write()
+	{
+		ar.get(0).set(120);
+		return (ar.get(0).get()); 
+	}
+	  
+}
+
+public class Example {
+	 public static void main(String[] args) throws InterruptedException, ExecutionException 
+	 {
+	ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
+	NewList ar=new NewList();
+	  Callable<Integer> callable = new callable(ar);
+      Callable<Integer> callable1 = new callable1(ar);
+      Future<Integer> result = executor.submit(callable);
+      Future<Integer> result1 = executor.submit(callable1);
+      System.out.println("Read"+result.get());
+      System.out.println("Write"+result1.get());
+      
+
+}
+}
